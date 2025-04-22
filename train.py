@@ -34,7 +34,7 @@ def train(cfg):
         root_dir=cfg['data']['root_dir']['windows']
     else:
         raise ValueError("Unsupported operating system")
-    
+
     if cfg['data']['name'] == 'mnist':
         # 数据加载
         train_transform = get_mnist_transform(train=True, image_size=cfg['data']['image_size'])
