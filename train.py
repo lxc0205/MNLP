@@ -10,8 +10,8 @@ from utils.logger import setup_logger
 from torch.utils.data import DataLoader
 from utils.metrics import AverageMeter, accuracy
 from torch.utils.tensorboard import SummaryWriter
-from data.mnist_dataset import get_mnist_datasets, get_mnist_transform
 from data.coco_dataset import get_coco_datasets, get_coco_transform
+from data.mnist_dataset import get_mnist_datasets, get_mnist_transform
 
 
 def train(cfg):
@@ -28,7 +28,12 @@ def train(cfg):
     logger = setup_logger(cfg['logging']['log_dir'])
     writer = SummaryWriter(cfg['logging']['log_dir'])
     
-
+    if os.name == "posix": # Linux
+        root_dir=cfg['data']['root_dir']['linux']
+    elif os.name == "nt":  # Windows
+        root_dir=cfg['data']['root_dir']['windows']
+    else:
+        raise ValueError("Unsupported operating system")
     
     if cfg['data']['name'] == 'mnist':
         # 数据加载
@@ -36,7 +41,7 @@ def train(cfg):
         val_transform = get_mnist_transform(train=False, image_size=cfg['data']['image_size'])
 
         train_dataset, val_dataset, _ = get_mnist_datasets(
-            root=cfg['data']['root_dir'],
+            root=root_dir,
             train_transform=train_transform,
             val_transform=val_transform
         )
@@ -46,7 +51,7 @@ def train(cfg):
         val_transform = get_coco_transform(train=False, image_size=cfg['data']['image_size'])
         
         train_dataset, val_dataset, _ = get_coco_datasets(
-            root=cfg['data']['root_dir'],
+            root=root_dir,
             train_transform=train_transform,
             val_transform=val_transform 
         )
